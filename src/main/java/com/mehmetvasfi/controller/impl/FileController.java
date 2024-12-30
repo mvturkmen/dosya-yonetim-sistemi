@@ -1,6 +1,8 @@
 package com.mehmetvasfi.controller.impl;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +13,9 @@ import org.springframework.web.multipart.MultipartFile;
 import com.mehmetvasfi.controller.IFileController;
 import com.mehmetvasfi.dto.ShareFileRequest;
 import com.mehmetvasfi.model.FileEntity;
+import com.mehmetvasfi.model.User;
+import com.mehmetvasfi.repository.FileRepository;
+import com.mehmetvasfi.repository.UserRepository;
 import com.mehmetvasfi.service.impl.FileService;
 
 @RestController
@@ -19,6 +24,12 @@ public class FileController implements IFileController {
 
     @Autowired
     private FileService fileService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private FileRepository fileRepository;
 
     /**
      * Upload multiple files and associate them with a user.
@@ -73,9 +84,20 @@ public class FileController implements IFileController {
     }
 
     @Override
-    public List<FileEntity> getFilesByUser(String username) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getFilesByUser'");
+    @GetMapping("/users/{username}")
+    public List<FileEntity> getFilesByUser(@PathVariable("username") String username) {
+        Optional<User> user = userRepository.findByUsername(username);
+        if (user.isEmpty()) {
+            throw new IllegalArgumentException("Kullanıcı bulunamadı: " + username);
+        }
+
+        List<FileEntity> files = fileRepository.findByUser_Id(user.get().getId());
+
+        if (files.isEmpty()) {
+            throw new NoSuchElementException("Kullanıcı için dosya bulunamadı: " + username);
+        }
+
+        return files;
     }
 
     @Override

@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.mehmetvasfi.dto.UsernameDTO;
 import com.mehmetvasfi.model.User;
@@ -32,4 +33,6 @@ public interface IUserController {
     public ResponseEntity<?> getSharedWithMe(@PathVariable Integer userId);
 
     public ResponseEntity<String> openFile(@PathVariable String filePath);
+
+    public boolean deleteUserByUsername(Map<String, String> requestBody);
 }

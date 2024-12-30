@@ -15,6 +15,7 @@ import org.springframework.http.HttpHeaders;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,6 +28,7 @@ import com.mehmetvasfi.controller.IUserController;
 import com.mehmetvasfi.dto.UsernameDTO;
 import com.mehmetvasfi.model.FileEntity;
 import com.mehmetvasfi.model.User;
+import com.mehmetvasfi.repository.UserRepository;
 import com.mehmetvasfi.service.impl.UserService;
 
 @RestController
@@ -35,6 +37,9 @@ public class UserController implements IUserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     @GetMapping(path = "/list")
@@ -147,4 +152,19 @@ public class UserController implements IUserController {
         }
     }
 
+    @Override
+    @PostMapping(path = "/delete")
+    public boolean deleteUserByUsername(@RequestBody Map<String, String> requestBody) {
+        String username = requestBody.get("username"); // JSON'dan alınan kullanıcı adı
+        System.out.println(username);
+
+        Optional<User> dbUser = findByUsername(username);
+        if (dbUser.isPresent()) {
+            userRepository.delete(dbUser.get());
+            System.out.println("İS PRESENT GİRDİ");
+            return true;
+        }
+        System.out.println("İS PRESENT GİRMEDİ");
+        return false;
+    }
 }
