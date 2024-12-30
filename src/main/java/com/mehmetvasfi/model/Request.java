@@ -1,5 +1,7 @@
 package com.mehmetvasfi.model;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,15 +17,21 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Admin {
+public class Request {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "username", unique = true, nullable = false)
+    @Column(name = "username")
     private String username;
 
-    @Column(name = "password", nullable = false)
-    private String password;
+    @Column(name = "new_password")
+    private String newPassword;
+
+    @Column(name = "approved")
+    private boolean approved = false;
+
+    @Column(name = "request_date")
+    private LocalDateTime requestDate = LocalDateTime.now();
 }

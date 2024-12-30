@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mehmetvasfi.controller.IAdminController;
 import com.mehmetvasfi.model.Admin;
+import com.mehmetvasfi.model.Request;
 import com.mehmetvasfi.service.impl.AdminService;
+import com.mehmetvasfi.service.impl.RequestService;
 
 @RestController
 @RequestMapping("/rest/api/admin")
@@ -20,6 +22,9 @@ public class AdminController implements IAdminController {
 
     @Autowired
     private AdminService adminService;
+
+    @Autowired
+    private RequestService requestService;
 
     @Override
     @GetMapping("/list")
@@ -42,6 +47,12 @@ public class AdminController implements IAdminController {
     @PostMapping("/login")
     public boolean adminLogin(@RequestBody Admin admin) {
         return adminService.adminLogin(admin);
+    }
+
+    @Override
+    @GetMapping("/pending")
+    public List<Request> getPendingRequests() {
+        return requestService.getPendingRequests(false);
     }
 
 }
