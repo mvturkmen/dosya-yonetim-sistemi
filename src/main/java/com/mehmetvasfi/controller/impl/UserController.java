@@ -1,21 +1,18 @@
 package com.mehmetvasfi.controller.impl;
 
 import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.awt.Desktop;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.UrlResource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpHeaders;
 
-import org.springframework.http.MediaType;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,6 +32,8 @@ import com.mehmetvasfi.service.impl.UserService;
 @RequestMapping("/rest/api/user")
 public class UserController implements IUserController {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+
     @Autowired
     private UserService userService;
 
@@ -50,8 +49,14 @@ public class UserController implements IUserController {
     @Override
     @PostMapping(path = "/save")
     public boolean saveUser(@RequestBody User user) {
-        return userService.saveUser(user);
-
+        logger.info("Attempting to save user: {}", user.getUsername());
+        boolean result = userService.saveUser(user);
+        if (result) {
+            logger.info("User saved successfully: {}", user.getUsername());
+        } else {
+            logger.warn("Failed to save user: {}", user.getUsername());
+        }
+        return result;
     }
 
     @Override
