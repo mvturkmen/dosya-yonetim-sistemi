@@ -1,12 +1,55 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} - %msg%n</pattern>
-        </encoder>
+
+    <!-- Log formatları -->
+    <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss} - %msg%n"/>
+
+    <!-- Log dosyalarının konumu -->
+    <property name="LOG_HOME" value="./logs"/>
+
+    <!-- Giriş/Çıkış logları -->
+    <appender name="GIRIS_CIKIS_LOG" class="ch.qos.logback.core.FileAppender">
+        <file>${LOG_HOME}/giris_cikis.log</file>
+        <layout>
+            <pattern>${LOG_PATTERN}</pattern>
+        </layout>
     </appender>
 
-    <root level="info">
-        <appender-ref ref="STDOUT"/>
+    <!-- Şifre değişim logları -->
+    <appender name="SIFRE_LOG" class="ch.qos.logback.core.FileAppender">
+        <file>${LOG_HOME}/sifre.log</file>
+        <layout>
+            <pattern>${LOG_PATTERN}</pattern>
+        </layout>
+    </appender>
+
+    <!-- Request logları -->
+    <appender name="REQUEST_LOG" class="ch.qos.logback.core.FileAppender">
+        <file>${LOG_HOME}/request.log</file>
+        <layout>
+            <pattern>${LOG_PATTERN}</pattern>
+        </layout>
+    </appender>
+
+    <!-- Yedekleme logları -->
+    <appender name="YEDEKLEME_LOG" class="ch.qos.logback.core.FileAppender">
+        <file>${LOG_HOME}/yedekleme.log</file>
+        <layout>
+            <pattern>${LOG_PATTERN}</pattern>
+        </layout>
+    </appender>
+
+    <!-- Log seviyeleri ve yönlendirmeleri -->
+    <logger name="com.mehmetvasfi.service.impl.UserService" level="INFO">
+        <appender-ref ref="GIRIS_CIKIS_LOG"/>
+        <appender-ref ref="REQUEST_LOG"/>
+    </logger>
+
+    <logger name="com.mehmetvasfi.service.impl.PasswordService" level="INFO">
+        <appender-ref ref="SIFRE_LOG"/>
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="YEDEKLEME_LOG"/>
     </root>
+
 </configuration>
