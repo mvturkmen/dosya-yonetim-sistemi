@@ -8,12 +8,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.mehmetvasfi.controller.IFileController;
+import com.mehmetvasfi.dto.ShareFileRequest;
 import com.mehmetvasfi.model.FileEntity;
 import com.mehmetvasfi.service.impl.FileService;
 
 @RestController
 @RequestMapping("/rest/api/files")
-public class FileController {
+public class FileController implements IFileController {
 
     @Autowired
     private FileService fileService;
@@ -63,4 +65,31 @@ public class FileController {
                     .body("Error retrieving files: " + e.getMessage());
         }
     }
+
+    @Override
+    public String uploadFile(MultipartFile[] files, String username) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'uploadFile'");
+    }
+
+    @Override
+    public List<FileEntity> getFilesByUser(String username) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getFilesByUser'");
+    }
+
+    @Override
+    @PostMapping("/share")
+    public ResponseEntity<String> shareFile(@RequestBody ShareFileRequest request) {
+        try {
+            fileService.shareFile(request.getFileId(), request.getUsername());
+            return ResponseEntity.ok("File shared successfully.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An error occurred while sharing the file.");
+        }
+    }
+
 }

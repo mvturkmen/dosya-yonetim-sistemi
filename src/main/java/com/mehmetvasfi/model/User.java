@@ -29,10 +29,8 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FileEntity> ownerFiles;
 
-    @JsonIgnore // Bu ilişkiyi JSON'da göstermeye gerek yok
     @ManyToMany
     @JoinTable(name = "user_accessible_files", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "file_id"))
     private List<FileEntity> accessibleFiles;
 
-    // getters and setters
 }

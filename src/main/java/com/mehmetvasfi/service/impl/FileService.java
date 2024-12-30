@@ -14,19 +14,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.mehmetvasfi.config.FileStorageProperties;
 import com.mehmetvasfi.model.FileEntity;
 import com.mehmetvasfi.model.User;
 import com.mehmetvasfi.repository.FileRepository;
 import com.mehmetvasfi.repository.UserRepository;
+import com.mehmetvasfi.service.IFileService;
 
 import jakarta.annotation.PostConstruct;
 
 @Service
-public class FileService {
-
-    @Autowired
-    private FileStorageProperties fileStorageProperties;
+public class FileService implements IFileService {
 
     @Autowired
     private FileRepository fileRepository;
@@ -83,4 +80,36 @@ public class FileService {
     public List<FileEntity> getFilesByUserId(Integer userId) {
         return fileRepository.findByUser_Id(userId);
     }
+
+    @Override
+    public FileEntity uploadFile(MultipartFile file, Integer user_id) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'uploadFile'");
+    }
+
+    @Override
+    public List<FileEntity> getFilesByUser(Integer user_id) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getFilesByUser'");
+    }
+
+    @Override
+    public void shareFile(Integer fileId, String username) {
+        // Kullanıcıyı bul
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with username: " + username));
+
+        // Dosyayı bul
+        FileEntity file = fileRepository.findById(fileId)
+                .orElseThrow(() -> new IllegalArgumentException("File not found with ID: " + fileId));
+
+        // Kullanıcının erişim listesine dosyayı ekle
+        if (!user.getAccessibleFiles().contains(file)) {
+            user.getAccessibleFiles().add(file);
+            userRepository.save(user); // Değişiklikleri kaydet
+        } else {
+            throw new IllegalArgumentException("File is already shared with this user.");
+        }
+    }
+
 }

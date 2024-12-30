@@ -28,7 +28,9 @@ public class FileEntity {
     private Long id;
 
     private String fileName;
+
     private String filePath;
+
     private LocalDateTime uploadDate;
 
     @JsonBackReference

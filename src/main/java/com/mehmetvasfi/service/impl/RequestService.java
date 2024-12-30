@@ -66,20 +66,23 @@ public class RequestService implements IRequestService {
             throw new IllegalArgumentException("Request not found for the given ID");
         }
 
-        User newUser = new User();
-        newUser.setUsername(request.get().getUsername());
+        String username = request.get().getUsername();
+        String newPassword = request.get().getNewPassword();
 
-        String password = request.get().getNewPassword();
-        if (!password.startsWith("$2a$")) {
-            password = BCrypt.hashpw(password, BCrypt.gensalt());
-        }
-
-        newUser.setPassword(password);
-        Optional<User> existingUser = userService.findByUsername(request.get().getUsername());
+        Optional<User> existingUser = userService.findByUsername(username);
         if (existingUser.isPresent()) {
-            userService.deleteUserById(existingUser.get().getId());
+            User user = existingUser.get();
+            if (!newPassword.startsWith("$2a$")) {
+                newPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+            }
+            user.setPassword(newPassword);
+            userService.updateUser(user); // Kullanıcıyı güncelle
+        } else {
+            User newUser = new User();
+            newUser.setUsername(username);
+            newUser.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
+            userService.saveUser(newUser); // Yeni kullanıcı oluştur
         }
-        userService.saveUser(newUser);
 
         requestRepository.deleteById(id);
         return true;

@@ -7,6 +7,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.mehmetvasfi.model.FileEntity;
 import com.mehmetvasfi.model.Request;
 import com.mehmetvasfi.model.User;
 import com.mehmetvasfi.repository.RequestRepository;
@@ -102,6 +103,19 @@ public class UserService implements IUserService {
         userRepository.deleteById(id);
     }
 
+    public boolean updateUser(User user) {
+        Optional<User> existingUser = userRepository.findById(user.getId());
+        if (existingUser.isPresent()) {
+            User updatedUser = existingUser.get();
+            updatedUser.setUsername(user.getUsername());
+            updatedUser.setPassword(user.getPassword());
+            // Diğer alanlar varsa ekleyin
+            userRepository.save(updatedUser);
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public boolean requestPasswordChange(String username, String newPassword) {
         Optional<User> user = userRepository.findByUsername(username);
@@ -133,6 +147,16 @@ public class UserService implements IUserService {
             return user.get().getUsername();
         }
         return null;
+    }
+
+    @Override
+    public List<FileEntity> getAccessibleFiles(Integer id) {
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isPresent()) {
+            return userOptional.get().getAccessibleFiles();
+        } else {
+            throw new IllegalArgumentException("Kullanıcı bulunamadı: " + id);
+        }
     }
 
 }

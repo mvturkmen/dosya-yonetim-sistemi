@@ -10,4 +10,6 @@ public interface IFileService {
     public FileEntity uploadFile(MultipartFile file, Integer user_id);
 
     public List<FileEntity> getFilesByUser(Integer user_id);
+
+    public void shareFile(Integer fileId, String username);
 }
